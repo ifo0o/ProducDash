@@ -27,6 +27,19 @@ var settings = {
   }
 }
 */
+    getLists();
+    //changeTask(1564347656,"hulahop",false,129108805)
+    $("body").on("click",'.task',function(){
+        changeTask($(this).attr('rel'),"tester",false,129108805);
+        alert($(this).attr('rel'))
+    });
+}
+
+
+$(document).ready(main);
+
+/*Returns all list objects in an array*/
+function getLists(){
     var settings = {
       "async": true,
       "crossDomain": true,
@@ -35,17 +48,77 @@ var settings = {
       "headers": {
         "x-access-token": "7f2375c1a0fa641564cbd45f53bd5c91c4475c61b19f6f423457b89acd5a",
         "x-client-id": "6b6bfca8e9a100b98a48",
-      }
-    }
+        }
+    };
 
-    $.ajax(settings).done(function (response) {
-      alert(JSON.stringify(response,null,4));
-      getInbox(response);
-    });
+      $.ajax(settings).done(function (response) {
+        //alert(JSON.stringify(response,null,4));
+        $.each(response, function(){
+            $(".list").append(this.id);
+            getTasks(this.id);
+        });
+      });
 }
 
+function getTasks(listid){
+    var settings = {
+      "async": true,
+      "crossDomain": true,
+      "url": "https://a.wunderlist.com/api/v1/tasks?list_id="+listid,
+      "method": "GET",
+      "headers": {
+        "x-access-token": "7f2375c1a0fa641564cbd45f53bd5c91c4475c61b19f6f423457b89acd5a",
+        "x-client-id": "6b6bfca8e9a100b98a48",
+        }
+    };
 
-$(document).ready(main);
+      $.ajax(settings).done(function (response) {
+        $.each(response, function(){
+            div = "";
+            div = "<div rel=\""+this.id+"\" class=\"task\">"+this.title+"</div>"
+            $(".list").append(div);
+        });
+      });
+}
+
+function changeTask(taskid,newTitle,completed,listid){
+    var settings = {
+      "async": true,
+      "crossDomain": true,
+      "url": "https://a.wunderlist.com/api/v1/tasks/" + taskid,
+      "method": "GET",
+      "headers": {
+        "x-access-token": "7f2375c1a0fa641564cbd45f53bd5c91c4475c61b19f6f423457b89acd5a",
+        "x-client-id": "6b6bfca8e9a100b98a48",
+        }
+    };
+    var datt = {}
+
+
+    $.ajax(settings).success(function (response) {
+        datt = {
+            "revision" : response.revision,
+            "title" : newTitle,
+            "completed" : completed,
+            "list_id": listid
+        }
+        var settings2 = {
+            "async": true,
+            "crossDomain": true,
+            "url": "https://a.wunderlist.com/api/v1/tasks/" + taskid,
+            "method": "PATCH",
+            "headers": {
+                "x-access-token": "7f2375c1a0fa641564cbd45f53bd5c91c4475c61b19f6f423457b89acd5a",
+                "x-client-id": "6b6bfca8e9a100b98a48",
+            },
+            contentType: 'application/json',
+            "data": JSON.stringify(datt)
+        };
+        $.ajax(settings2).done(function (response) {
+
+        });
+    });
+}
 
 function getInbox(response){
     inbox = $.grep(response,function(e){
