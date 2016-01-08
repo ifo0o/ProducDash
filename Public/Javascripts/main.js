@@ -29,17 +29,17 @@ var settings = {
 */
     getLists();
     //changeTask(1564347656,"hulahop",false,129108805)
-    $("body").on("click",'.task',function(){
+    /*$("body").on("click",'.task',function(){
         changeTask($(this).attr('rel'),"tester",false,129108805);
         alert($(this).attr('rel'))
-    });
+    });*/
 }
 
 
-$(document).ready(main);
 
+$(document).ready(main);
 /*Returns all list objects in an array*/
-function getLists(){
+/*function getLists(){
     var settings = {
       "async": true,
       "crossDomain": true,
@@ -58,7 +58,75 @@ function getLists(){
             getTasks(this.id);
         });
       });
-}
+}*/
+
+/*Returns all list objects in an array*/
+function getLists(){
+    var settings = {
+        "async": true,
+        "crossDomain": true,
+        "url": "https://a.wunderlist.com/api/v1/lists",
+        "method": "GET",
+        "headers": {
+            "x-access-token": "7f2375c1a0fa641564cbd45f53bd5c91c4475c61b19f6f423457b89acd5a",
+            "x-client-id": "6b6bfca8e9a100b98a48",
+        }
+    };
+
+    var schoolID, snelleTakenID
+
+    $.ajax(settings).done(function (response) {
+        //alert(JSON.stringify(response,null,4));
+        $.each(response, function(){
+            switch (this.title) {
+                case "School":
+                    displayMainTasks(this.id,"school")
+                    break;
+                case "Snelle taken":
+                    displayMainTasks(this.id,"snelleTaken")
+                default:
+            }
+        });
+    });
+};
+
+function displayMainTasks(id,name) {
+    var div = ""
+    var wrapid, divHead = "";
+
+    if(name==="school"){
+        divHead = "School";
+        wrapid = "#schoolWrap"
+    }else if(name==="snelleTaken"){
+        divHead = "Snelle Taken";
+        wrapid = "#quickTaskWrap"
+    }
+
+    div =
+    "<div class=\"panel panel-default\"><div class=\"panel-heading\">"
+    +divHead+"</div><ul class=\"list-group\">"
+
+    var settings = {
+        "async": true,
+        "crossDomain": true,
+        "url": "https://a.wunderlist.com/api/v1/tasks?list_id="+id,
+        "method": "GET",
+        "headers": {
+            "x-access-token": "7f2375c1a0fa641564cbd45f53bd5c91c4475c61b19f6f423457b89acd5a",
+            "x-client-id": "6b6bfca8e9a100b98a48",
+        }
+    };
+
+    $.ajax(settings).done(function (response) {
+        $.each(response, function(){
+            var task = "";
+            task += "<li rel=\""+this.id+"\" class=\"list-group-item\">"+this.title+"</li>";
+            div += task;
+        });
+        div += "</ul></div>";
+        $(wrapid).append(div)
+    });
+};
 
 function getTasks(listid){
     var settings = {
