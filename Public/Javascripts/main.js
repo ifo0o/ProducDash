@@ -1,8 +1,24 @@
+globalListid = 0;
+
 var main = function() {
 
-    updateCache();
+    //initializeCache();
 
-    $(".container-fluid").on("click", ".testbutton", appendfromcache)
+    $(".container-fluid").on("click", ".testbutton", displayTaskWithTag)
+    $(".lists").on("click", ".task", mimicDone)
+
+/*
+    $.when(initializeCache).done(function(){
+        //alert(JSON.stringify(cache,null,4))
+    })
+    */
+
+    $.when(buildListCache).done(function(){
+        console.log(JSON.stringify(listsid,null,4))
+        initTasks()
+    });
+
+
 
 /*
     header('Content-Type': 'application/json';'charset=UTF-8');
@@ -42,6 +58,10 @@ var settings = {
 
 
 $(document).ready(main);
+
+function mimicDone(){
+    $(this).addClass("mimic-done")
+}
 /*Returns all list objects in an array*/
 /*function getLists(){
     var settings = {
@@ -221,7 +241,7 @@ function getInbox(response){
     $(".list").append(inbox[0].id)
 }
 
-function displayTaskWithTag(tag){
+function displayTaskWithTagg(tag){
 
     var result = $.grep(listsid, function(e){ return e.title == "Lange termijn"; });
     //alert(JSON.stringify(result[0],null,4))
