@@ -1,5 +1,9 @@
 var main = function() {
 
+    updateCache();
+
+    $(".container-fluid").on("click", ".testbutton", appendfromcache)
+
 /*
     header('Content-Type': 'application/json';'charset=UTF-8');
     header('Access-Control-Allow-Origin': '*');
@@ -27,7 +31,7 @@ var settings = {
   }
 }
 */
-    getLists();
+    //getLists();
     //changeTask(1564347656,"hulahop",false,129108805)
     /*$("body").on("click",'.task',function(){
         changeTask($(this).attr('rel'),"tester",false,129108805);
@@ -59,6 +63,27 @@ $(document).ready(main);
         });
       });
 }*/
+
+
+function displayLists(task){
+    /*
+    divHead = "TEST";
+    wrapid = "#schoolWrap"
+
+    div =
+    "<div class=\"panel panel-default\"><div class=\"panel-heading\">"
+    +divHead+"</div><ul class=\"list-group\">"
+
+        var task = "";
+        task += "<li rel=\""+this.id+"\" class=\"list-group-item\">"+this.title+"</li>";
+        div += task;
+
+    div += "</ul></div>";
+    $(wrapid).append(div)
+    */
+    $(".test").append(task.title)
+    $(".test").append("<br>")
+};
 
 /*Returns all list objects in an array*/
 function getLists(){
@@ -194,4 +219,21 @@ function getInbox(response){
     });
 
     $(".list").append(inbox[0].id)
+}
+
+function displayTaskWithTag(tag){
+
+    var result = $.grep(listsid, function(e){ return e.title == "Lange termijn"; });
+    //alert(JSON.stringify(result[0],null,4))
+    //alert(result[0].id)
+
+    $.each(cache, function(){
+        if(this.title.substring(0,3)===tag){
+            if(this.list_id===result[0].id){
+                $(".test").append("Taak voor de lange termijn:")
+            }
+            $(".test").append(this.title)
+            $(".test").append("<br>")
+        };
+    });
 }
