@@ -1,11 +1,5 @@
-.mainTaskHead{
-    font-weight:bold;
-}
-
 .task{
-    background-color: lightblue;
-    padding: 5px;
-    margin: 3px;
+    margin-bottom: 10px;
 }
 
 .longterm {
@@ -13,5 +7,9 @@
 }
 
 .mimic-done{
-    background-color: darkgrey;
+    background-color: lightgrey;
+}
+
+.panel-heading{
+    font-weight: bold;
 }

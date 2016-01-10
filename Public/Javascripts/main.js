@@ -1,91 +1,46 @@
-globalListid = 0;
-
 var main = function() {
+    $(document).on("click", ".task", mimicDone);
 
-    //initializeCache();
-
-    $(".container-fluid").on("click", ".testbutton", displayTaskWithTag)
-    $(".lists").on("click", ".task", mimicDone)
-
-/*
-    $.when(initializeCache).done(function(){
-        //alert(JSON.stringify(cache,null,4))
-    })
-    */
-
-    $.when(buildListCache).done(function(){
-        console.log(JSON.stringify(listsid,null,4))
-        initTasks()
+    $.when(initLists).done(function(){
+        initTasks();
     });
 
+    $(document).on("click", "#newtask-button", addTask);
 
+    $(document).on("click", "#persubject-button", clearTasks)
+    $(document).on("click", "#persubject-button", displayPerSubject)
 
-/*
-    header('Content-Type': 'application/json';'charset=UTF-8');
-    header('Access-Control-Allow-Origin': '*');
-    header('Access-Control-Allow-Methods': "DELETE", "HEAD", "GET", "OPTIONS", "POST", "PUT");
-    header('Access-Control-Allow-Headers': 'Content-Type', 'Content-Range', 'Content-Disposition', 'Content-Description');
-    header('Access-Control-Max-Age': '1728000'); */
-/*
-    $.ajax({
-              dataType: "json",
-      url: "a.wunderlist.com/api/v1/lists"+"&callback=?",
-      headers: { 'X-Access-Token': '7f2375c1a0fa641564cbd45f53bd5c91c4475c61b19f6f423457b89acd5a',
-      'X-Client-ID': '6b6bfca8e9a100b98a48'},
-success: success});
-
-};*/
-/*
-var settings = {
-  "async": true,
-  "crossDomain": true,
-  "url": "https://a.wunderlist.com/api/v1/lists?callback=jQuery111305825689279008657_1451943156370&_=1451943156371",
-  "method": "GET",
-  "headers": {
-    "x-access-token": "7f2375c1a0fa641564cbd45f53bd5c91c4475c61b19f6f423457b89acd5a",
-    "x-client-id": "6b6bfca8e9a100b98a48",
-  }
-}
-*/
-    //getLists();
-    //changeTask(1564347656,"hulahop",false,129108805)
-    /*$("body").on("click",'.task',function(){
-        changeTask($(this).attr('rel'),"tester",false,129108805);
-        alert($(this).attr('rel'))
-    });*/
-}
-
-
+    $(document).on("click", "#permainlist-button", clearTasks)
+    $(document).on("click", "#permainlist-button", displayDefault)
+};
 
 $(document).ready(main);
 
 function mimicDone(){
-    $(this).addClass("mimic-done")
-}
-/*Returns all list objects in an array*/
-/*function getLists(){
-    var settings = {
-      "async": true,
-      "crossDomain": true,
-      "url": "https://a.wunderlist.com/api/v1/lists",
-      "method": "GET",
-      "headers": {
-        "x-access-token": "7f2375c1a0fa641564cbd45f53bd5c91c4475c61b19f6f423457b89acd5a",
-        "x-client-id": "6b6bfca8e9a100b98a48",
-        }
-    };
-
-      $.ajax(settings).done(function (response) {
-        //alert(JSON.stringify(response,null,4));
-        $.each(response, function(){
-            $(".list").append(this.id);
-            getTasks(this.id);
-        });
-      });
-}*/
+    if($(this).hasClass("mimic-done")){
+        $(this).removeClass("mimic-done")
+    }else{
+        $(this).addClass("mimic-done")
+    }
 
 
-function displayLists(task){
+};
+
+function displayDefault(){
+    var mainLists = ["Snelle taken","Privé", "School", "Werk", "Lange termijn"];
+    var column = 2;
+    var listid = 0;
+
+    $.each(mainLists,function(index,value){
+        listid = getListid(value);
+        $(".row .col-lg-2:nth-child("+column+")").append(returnListDiv(listid));
+        column++;
+    });
+};
+
+//--------------------------------------------------------------------------------
+
+//function displayLists(task){
     /*
     divHead = "TEST";
     wrapid = "#schoolWrap"
@@ -101,11 +56,12 @@ function displayLists(task){
     div += "</ul></div>";
     $(wrapid).append(div)
     */
-    $(".test").append(task.title)
-    $(".test").append("<br>")
-};
+//    $(".test").append(task.title)
+//    $(".test").append("<br>")
+//};
 
 /*Returns all list objects in an array*/
+/*
 function getLists(){
     var settings = {
         "async": true,
@@ -134,7 +90,9 @@ function getLists(){
         });
     });
 };
+*/
 
+/*
 function displayMainTasks(id,name) {
     var div = ""
     var wrapid, divHead = "";
@@ -257,3 +215,61 @@ function displayTaskWithTagg(tag){
         };
     });
 }
+*/
+
+/*Returns all list objects in an array*/
+/*function getLists(){
+    var settings = {
+      "async": true,
+      "crossDomain": true,
+      "url": "https://a.wunderlist.com/api/v1/lists",
+      "method": "GET",
+      "headers": {
+        "x-access-token": "7f2375c1a0fa641564cbd45f53bd5c91c4475c61b19f6f423457b89acd5a",
+        "x-client-id": "6b6bfca8e9a100b98a48",
+        }
+    };
+
+      $.ajax(settings).done(function (response) {
+        //alert(JSON.stringify(response,null,4));
+        $.each(response, function(){
+            $(".list").append(this.id);
+            getTasks(this.id);
+        });
+      });
+}*/
+
+
+/*
+    header('Content-Type': 'application/json';'charset=UTF-8');
+    header('Access-Control-Allow-Origin': '*');
+    header('Access-Control-Allow-Methods': "DELETE", "HEAD", "GET", "OPTIONS", "POST", "PUT");
+    header('Access-Control-Allow-Headers': 'Content-Type', 'Content-Range', 'Content-Disposition', 'Content-Description');
+    header('Access-Control-Max-Age': '1728000'); */
+/*
+    $.ajax({
+              dataType: "json",
+      url: "a.wunderlist.com/api/v1/lists"+"&callback=?",
+      headers: { 'X-Access-Token': '7f2375c1a0fa641564cbd45f53bd5c91c4475c61b19f6f423457b89acd5a',
+      'X-Client-ID': '6b6bfca8e9a100b98a48'},
+success: success});
+
+};*/
+/*
+var settings = {
+  "async": true,
+  "crossDomain": true,
+  "url": "https://a.wunderlist.com/api/v1/lists?callback=jQuery111305825689279008657_1451943156370&_=1451943156371",
+  "method": "GET",
+  "headers": {
+    "x-access-token": "7f2375c1a0fa641564cbd45f53bd5c91c4475c61b19f6f423457b89acd5a",
+    "x-client-id": "6b6bfca8e9a100b98a48",
+  }
+}
+*/
+    //getLists();
+    //changeTask(1564347656,"hulahop",false,129108805)
+    /*$("body").on("click",'.task',function(){
+        changeTask($(this).attr('rel'),"tester",false,129108805);
+        alert($(this).attr('rel'))
+    });*/
