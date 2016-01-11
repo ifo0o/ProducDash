@@ -12,18 +12,26 @@ var main = function() {
 
     $(document).on("click", "#permainlist-button", clearTasks)
     $(document).on("click", "#permainlist-button", displayDefault)
+
+    $(document).on("click", "#today-button", clearTasks)
+    $(document).on("click", "#today-button", displayToday)
+
+    $(document).on("click", ".task-today-button", doToday)
 };
 
 $(document).ready(main);
 
 function mimicDone(){
     if($(this).hasClass("mimic-done")){
-        $(this).removeClass("mimic-done")
+        $(this).removeClass("mimic-done");
     }else{
-        $(this).addClass("mimic-done")
-    }
+        $(this).addClass("mimic-done");
+    };
+};
 
-
+function doToday(){
+    var taskid = $(this).parents(".task").attr("rel"); /*get rel attribute of parent class .task*/
+    addTaskToToday(taskid);
 };
 
 function displayDefault(){
@@ -35,6 +43,96 @@ function displayDefault(){
         listid = getListid(value);
         $(".row .col-lg-2:nth-child("+column+")").append(returnListDiv(listid));
         column++;
+    });
+};
+
+function displayToday(){
+    var today = new Date(); /*Today*/
+    var todayString = toDateString(today);
+    var todayTasks = [];
+
+    $.each(cache,function(){
+        if(this.due_date === todayString){
+            todayTasks.push(this);
+        };
+    });
+
+    $(".row .col-lg-2:nth-child(2)").append(returnGenericListDiv(todayTasks,"Vandaag"));
+};
+
+/*Returns a date string of format YYYY-MM-DD, input date object*/
+function toDateString(date){
+    var date = new Date(date);
+    var dateString = "";
+    var month, day = 0;
+
+    month = date.getMonth() + 1; /*Januari = 0*/
+    if(month < 10){
+        month = "0" + month;
+    };
+    day = date.getDate();
+    if(day < 10){
+        day = "0" + day;
+    };
+    dateString += date.getFullYear();
+    dateString += "-";
+    dateString += month;
+    dateString += "-";
+    dateString += day;
+
+    return dateString;
+};
+
+function addTaskToToday(taskid){
+    var today = new Date(); /*Today*/
+    var settings = {
+      "async": true,
+      "crossDomain": true,
+      "url": "https://a.wunderlist.com/api/v1/tasks/" + taskid,
+      "method": "GET",
+      "headers": {
+        "x-access-token": "7f2375c1a0fa641564cbd45f53bd5c91c4475c61b19f6f423457b89acd5a",
+        "x-client-id": "6b6bfca8e9a100b98a48",
+        }
+    };
+    var datt = {}
+
+    $.ajax(settings).success(function (response) {
+        datt = {
+            "due_date": toDateString(today),
+            "revision" : response.revision /*get revision number from response of first ajax call*/
+        };
+        var settings2 = {
+            "async": true,
+            "crossDomain": true,
+            "url": "https://a.wunderlist.com/api/v1/tasks/" + taskid,
+            "method": "PATCH",
+            "headers": {
+                "x-access-token": "7f2375c1a0fa641564cbd45f53bd5c91c4475c61b19f6f423457b89acd5a",
+                "x-client-id": "6b6bfca8e9a100b98a48",
+            },
+            contentType: 'application/json',
+            "data": JSON.stringify(datt)
+        };
+        $.ajax(settings2).done(function (response) {
+            /*Remove this task*/
+            removeTask(taskid);
+
+            /*Get updated task*/
+            var settings3 = {
+                "async": true,
+                "crossDomain": true,
+                "url": "https://a.wunderlist.com/api/v1/tasks/"+taskid,
+                "method": "GET",
+                "headers": {
+                    "x-access-token": "7f2375c1a0fa641564cbd45f53bd5c91c4475c61b19f6f423457b89acd5a",
+                    "x-client-id": "6b6bfca8e9a100b98a48",
+                },
+            };
+            $.ajax(settings3).done(function (response) {
+                cache.push(response);
+            });
+        });
     });
 };
 

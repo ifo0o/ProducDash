@@ -7,7 +7,7 @@ var main = function() {
 };
 
 $(document).ready(main);
-
+/*
 function displayStuff(){
     var mainLists = ["WEB","MOD", "MIC", "GRV", "COM"]
     column = 2;
@@ -27,4 +27,4 @@ function displayStuff(){
     displayList(getListid("Werk"))
     displayList(getListid("Privé"))
     */
-};
+//};

@@ -13,6 +13,7 @@ function returnTaskDiv(task,markLongTerm){
     div += "<div class=\"task panel panel-default "+classes+"\" rel=\""+task.id+"\">"
     div += "<div class=\"panel-body\">";
     div += task.title;
+    div += "<div class=\"btn btn-default task-today-button\" type=\"button\"><span class=\"glyphicon glyphicon-pushpin\"></span></div>"
     div += "</div></div>";
 
     return div;
@@ -28,6 +29,20 @@ function returnListDiv(listid){
         if(this.list_id===listid){
             cont += returnTaskDiv(this,false)
         };
+    });
+    cont += "</div></div>"
+
+    return cont;
+};
+
+function returnGenericListDiv(tasks,title){
+    var cont = "";
+
+    cont += "<div class=\"list panel panel-default\">";
+    cont += "<div class=\"panel-heading\">"+title+"</div>";
+    cont += "<div class=\"panel-body\">";
+    $.each(tasks, function(){
+        cont += returnTaskDiv(this,false)
     });
     cont += "</div></div>"
 
@@ -50,6 +65,14 @@ function getListName(id){
     return n[0].title;
 };
 
+/*Get the task object passing the id from cache*/
+function getTaskObject(id){
+    var t = $.grep(cache,function(e){
+        return e.id == id;
+    });
+    return t[0];
+};
+
 function clearTasks(){
     $(".taskcol").children().remove();
 };
@@ -62,6 +85,19 @@ function displayPerSubject(){
         $(".row .col-lg-2:nth-child("+column+")").append(returnTagListDiv(value));
         column++;
     });
+};
+
+/*Remove task from cache by id*/
+function removeTask(id){
+    //var index = cache.indexOf(id);
+    //console.log(index)
+    //cache.splice(index,1);
+    //console.log(id)
+    console.log(JSON.stringify(getTaskObject(id),null,4));
+    cache = jQuery.grep(cache, function(value) {
+        return value != getTaskObject(id);
+    });
+    console.log(cache.length)
 };
 
 //------------------------------------------------------------------Nog nodig?
