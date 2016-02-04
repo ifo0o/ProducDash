@@ -35,5 +35,7 @@
 }
 
 body {
-    background-color: #999;
+    background-color: #252830;
+    /*background-image: url("http://www.flabber.nl/sites/default/files/archive/files/i-should-buy-a-boat.jpg");*/
+    background-size: cover;
 }

@@ -35,16 +35,22 @@ function doToday(){
 };
 
 function displayDefault(){
-    var mainLists = ["Snelle taken","Privé", "School", "Werk", "Lange termijn"];
-    var column = 2;
+    var mainLists = ["Snelle taken","Privé", "School", "Werk", "Lange termijn", "Nog in te leveren"];
+    var column = 1;
     var listid = 0;
 
     $.each(mainLists,function(index,value){
         listid = getListid(value);
-        $(".row .col-lg-2:nth-child("+column+")").append(returnListDiv(listid));
-        column++;
+        $("."+column).append(returnListDiv(listid));
+        if(column < 5){
+            column++
+        }else{
+            column = 1
+        }
+/*".tasks .taskcol:nth-child("+column+")"*/
     });
 };
+
 
 function displayToday(){
     var today = new Date(); /*Today*/

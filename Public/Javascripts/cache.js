@@ -27,6 +27,7 @@ var initLists = $.ajax({
     }
 });
 
+/*Initializes tasks*/
 function initTasks(){
     var count = 0;
     var total = listCache.length;
@@ -47,7 +48,7 @@ function initTasks(){
                 $.each(response, function(){
                     tempCache.push(this)
                 });
-                count++
+                count++;
                 if(count===total){
                     cache = tempCache
                     displayDefault()
