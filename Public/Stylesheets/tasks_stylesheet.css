@@ -31,4 +31,12 @@
 
 li:hover{
     background-color: #E6E9ED;
+    cursor: pointer;
+}
+
+.selected{
+    background-color: #CCD1D9
+}
+.selected:hover{
+    background-color: #CCD1D9
 }

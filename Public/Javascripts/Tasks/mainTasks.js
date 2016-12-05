@@ -1,25 +1,224 @@
-var main = function() {
-    //$(document).on("click", ".task", mimicDone);
+selTask = -1;
 
-    $.when(initLists).done(function(){
+var main = function() {
+    $.when(initLists).done(function(){ //build cache
         initTasks();
     });
 
-    $(document).on("click", "#newtask-button", addTask);
-
     $(document).on("click", "#persubject-button", clearTasks)
-    $(document).on("click", "#persubject-button", displayPerSubject)
+    $(document).on("click", "#persubject-button", function(e){displayLists('subs')})
 
     $(document).on("click", "#permainlist-button", clearTasks)
-    $(document).on("click", "#permainlist-button", displayDefault)
+    $(document).on("click", "#permainlist-button", function(e){displayLists('lists')})
 
-    $(document).on("click", "#today-button", clearTasks)
-    $(document).on("click", "#today-button", displayToday)
+    $(document).on("click", "#newtask-button", addTask);
 
-    //$(document).on("click", ".task-today-button", doToday)
+    $(document).on("click", ".taskitem", function(e){selectTask($(this).attr('rel'))});
+    //$(document).on("click", ".taskitem", function(e){modTask(this.rel,{            'completed' : true})});
+    $(document).on( "keydown", function(e){
+        if(e.which == 13){
+            if($('.selected').attr('rel')!==undefined){
+                modTask($('.selected').attr('rel'),{'completed' : true});
+            }
+        }else if(e.which==37){//left
+            selectPrevList()
+        }else if(e.which==38){//up
+            selectPrevTask()
+        }else if(e.which==39){//right
+            selectNextList()
+        }else if(e.which==40){//down
+            selectNextTask()
+        }
+    });
+
 };
 
 $(document).ready(main);
+
+function selectTask(id){
+    $(".taskitem").removeClass('selected')
+    $('li[rel="'+id+'"]').addClass('selected')
+}
+function selectFirstTask(){
+    //first_task = $.grep(cache, function(value,index){return(value.list_id==getListid('Snelle taken'))})
+    //selectTask(first_task[0].id)
+    selTask = 0;
+    selectTask(cache[selTask].id)
+}
+function selectNextTask(){
+    if(selTask == -1){ //if none selected
+        selTask = 0;
+        selectTask(cache[selTask].id)
+    }else{
+        if(selTask == cache.length-1){
+            selTask=0;
+        }else{
+            selTask++;
+        }
+        selectTask(cache[selTask].id)
+    }
+}
+function selectPrevTask(){
+    if(selTask == -1){ //if none selected
+        selTask = 0;
+        selectTask(cache[selTask].id)
+    }else{
+        if(selTask == 0){
+            selTask=cache.length-1;
+        }else{
+            selTask--;
+        }
+        selectTask(cache[selTask].id)
+    }
+}
+function selectNextList(){
+    if(selTask == -1){ //if none selected
+        selTask = 0;
+        selectTask(cache[selTask].id)
+    }else{
+        var currentList = cache[selTask].list_number
+        selTask = cache.findIndex(function(e){return e.list_number>currentList}) //> since very next list could be empty
+        if(selTask === -1){selTask=0} //returned -1 if couldnt find next task, then start at beginning
+        selectTask(cache[selTask].id)
+    }
+}
+function selectPrevList(){
+    if(selTask == -1){ //if none selected
+        selTask = 0;
+        selectTask(cache[selTask].id)
+    }else{
+        console.log(selTask)
+        var currentList = cache[selTask].list_number
+        if(currentList == 0){
+            currentList = 7; //hardcoded length
+        }
+        var i = 1
+        do{
+            selTask = cache.findIndex(function(e){return e.list_number==currentList-i})
+            console.log(selTask)
+            i++
+        }
+        while(selTask == -1)
+        selectTask(cache[selTask].id)
+    }
+}
+
+
+//SORTER
+var sort_by;
+
+(function() {
+    // utility functions
+    var default_cmp = function(a, b) {
+            if (a == b) return 0;
+            return a < b ? -1 : 1;
+        },
+        getCmpFunc = function(primer, reverse) {
+            var dfc = default_cmp, // closer in scope
+                cmp = default_cmp;
+            if (primer) {
+                cmp = function(a, b) {
+                    return dfc(primer(a), primer(b));
+                };
+            }
+            if (reverse) {
+                return function(a, b) {
+                    return -1 * cmp(a, b);
+                };
+            }
+            return cmp;
+        };
+
+    // actual implementation
+    sort_by = function() {
+        var fields = [],
+            n_fields = arguments.length,
+            field, name, reverse, cmp;
+
+        // preprocess sorting options
+        for (var i = 0; i < n_fields; i++) {
+            field = arguments[i];
+            if (typeof field === 'string') {
+                name = field;
+                cmp = default_cmp;
+            }
+            else {
+                name = field.name;
+                cmp = getCmpFunc(field.primer, field.reverse);
+            }
+            fields.push({
+                name: name,
+                cmp: cmp
+            });
+        }
+
+        // final comparison function
+        return function(A, B) {
+            var a, b, name, result;
+            for (var i = 0; i < n_fields; i++) {
+                result = 0;
+                field = fields[i];
+                name = field.name;
+
+                result = field.cmp(A[name], B[name]);
+                if (result !== 0) break;
+            }
+            return result;
+        }
+    }
+}());
+
+
+
+
+
+
+
+
+
+
+
+/*
+function displayDefault(){
+    //var mainLists = ["Snelle taken","Privé", "School", "Werk", "Lange termijn", "Nog in te leveren"];
+
+    $.each(mainLists,function(index,value){
+        var listid = getListid(value);
+        $("#tasks").append(columnarray[index]+returnListDiv(listid)+'</div>')
+    });
+};
+
+function displayPerSubject(){
+    //var tags = ["STO","STA","PRO"]
+
+    $.each(tags,function(index,value){
+        $("#tasks").append(columnarray[index]+returnTagListDiv(value)+'</div>')
+    });
+};*/
+
+/*
+function returnTagListDiv(tag){
+    var cont = "";
+
+    cont += '<div class="panel panel-info">'
+    cont += '<div class="panel-heading">'+tag+'</div>'
+    cont += '<div class="list-group">'
+
+    cont += "</div></div>"
+
+    return cont;
+};*/
+
+
+
+
+
+
+
+
+
+
+//---------------------mimic done stuff----------------------------------
 
 /*function mimicDone(){
     if($(this).hasClass("mimic-done")){
@@ -29,48 +228,18 @@ $(document).ready(main);
     };
 };*/
 
+// --------------------today stuff-------------------------------------------
+//$(document).on("click", "#today-button", clearTasks)
+//$(document).on("click", "#today-button", displayToday)
 
-//function doToday(){
-//    var taskid = $(this).parents(".task").attr("rel"); /*get rel attribute of parent class .task*/
-//    addTaskToToday(taskid);
-//};
-
-function displayDefault(){
-    var mainLists = ["Snelle taken","Privé", "School", "Werk", "Lange termijn", "Nog in te leveren"];
-    var column = 1;
-    var listid = 0;
-
-    columnarray = [
-        '<div class="col-sm-3 col-md-3 col-lg-2 col-sm-offset-3 col-md-offset-3 col-lg-offset-2">',
-        '<div class="col-sm-3 col-md-3 col-lg-2">',
-        '<div class="col-sm-3 col-md-3 col-lg-2">',
-        '<div class="col-sm-3 col-md-3 col-lg-2 col-sm-offset-3 col-md-offset-3 col-lg-offset-0 ">',
-        '<div class="col-sm-3 col-md-3 col-lg-2">',
-        '<div class="col-sm-3 col-md-3 col-lg-2 col-sm-offset-0 col-md-offset-0 col-lg-offset-10">' //float last one to right
-    ]
-
-    i = 0
-    $.each(mainLists,function(index,value){
-        listid = getListid(value);
-        $("#tasks").append(columnarray[i]+returnListDiv(listid)+'</div>')
-        i++;
-    });
-/*
-    $.each(mainLists,function(index,value){
-        listid = getListid(value);
-        $("."+column).append(returnListDiv(listid));
-        if(column < 5){
-            column++
-        }else{
-            column = 1
-        }
-        */
-/*".tasks .taskcol:nth-child("+column+")"*/
+//$(document).on("click", ".task-today-button", doToday)
+function doToday(){
+    var taskid = $(this).parents(".task").attr("rel"); /*get rel attribute of parent class .task*/
+    addTaskToToday(taskid);
 };
 
-
 function displayToday(){
-    var today = new Date(); /*Today*/
+    var today = new Date(); //today
     var todayString = toDateString(today);
     var todayTasks = [];
 
@@ -89,7 +258,7 @@ function toDateString(date){
     var dateString = "";
     var month, day = 0;
 
-    month = date.getMonth() + 1; /*Januari = 0*/
+    month = date.getMonth() + 1; //Januari = 0
     if(month < 10){
         month = "0" + month;
     };
@@ -113,10 +282,7 @@ function addTaskToToday(taskid){
       "crossDomain": true,
       "url": "https://a.wunderlist.com/api/v1/tasks/" + taskid,
       "method": "GET",
-      "headers": {
-        "x-access-token": "7f2375c1a0fa641564cbd45f53bd5c91c4475c61b19f6f423457b89acd5a",
-        "x-client-id": "6b6bfca8e9a100b98a48",
-        }
+      "headers": headers
     };
     var datt = {}
 
