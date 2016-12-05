@@ -12,6 +12,8 @@
 
         <!-- Bootstrap core CSS -->
         <link href="Stylesheets/bootstrap-3.3.5-dist/css/bootstrap.min.css" rel="stylesheet">
+        <!-- Bootflat theme -->
+        <link href="Stylesheets/bootflat/css/bootflat.css" rel="stylesheet">
         <!-- Custom stylesheets-->
         <link href="Stylesheets/sidebar_stylesheet.css" rel="stylesheet">
         <link href="Stylesheets/tasks_stylesheet.css" rel="stylesheet">
@@ -29,48 +31,32 @@
             <div class="row">
                 <div class="col-sm-3 col-md-3 col-lg-2 sidebar">
                     <ul class="nav nav-sidebar">
-                        <li class="active"><a href="index.html">Overview</a></li>
-                        <li><a href="sport.html">Sport</a></li>
+                        <li class="active"><a href="index.html"><h5>Overzicht</h5></a></li>
+                        <li><a href="sport.html"><h4>Sport</h4></a></li>
                     </ul>
                 </div>
             </div>
+
+            <!-- toevoegen todo balk-->
             <div class="row">
-                <div class="col-sm-3 col-sm-offset-3 col-md-3 col-md-offset-3 col-lg-5 col-lg-offset-2">
-                    <div class="panel panel-default">
-                        <div class="panel-heading">Add a task</div>
-                        <div class="panel-body">
-                            <div class="input-group">
-                                <input type="text" class="form-control" id="newtask-input" placeholder="Nieuwe Todo">
+                <div class="col-sm-9 col-sm-offset-3 col-md-9 col-md-offset-3 col-lg-5 col-lg-offset-2">
+                    <div class="well">
+                        <div class="input-group">
+                            <input type="text" class="form-control" id="newtask-input" placeholder="Nieuwe Todo">
                                 <span class="input-group-btn">
-                                    <div class="btn btn-default" id="newtask-button" type="button">Toevoegen!</div>
+                                    <div class="btn btn-primary" id="newtask-button" type="button">Toevoegen!</div>
                                 </span>
-                            </div>
-                            <div class="btn btn-default" id="persubject-button" type="button">Per vak</div>
-                            <div class="btn btn-default" id="permainlist-button" type="button">Per lijst</div>
-                            <div class="btn btn-default" id="today-button" type="button">Vandaag</div>
+                        </div>
+                        <div class="btn-group" role="group">
+                          <button type="button" class="btn btn-primary" id="persubject-button">Per vak</button>
+                          <button type="button" class="btn btn-default" id="permainlist-button">Per lijst</button>
                         </div>
                     </div>
                 </div>
             </div>
-            <div class="tasks">
-                <div class="row">
-                    <div class="1 taskcol col-sm-3 col-sm-offset-3 col-md-3 col-md-offset-3 col-lg-2 col-lg-offset-2">
 
-                    </div>
-                    <div class="2 taskcol col-sm-3 col-md-3 col-lg-2">
-
-                    </div>
-                    <div class="3 taskcol col-sm-3 col-md-3 col-lg-2">
-
-                    </div>
-                    <div class="clearfix visible-sm visible-md"></div>
-                    <div class="4 taskcol col-sm-3 col-sm-offset-3 col-md-3 col-lg-2 col-lg-offset-0">
-
-                    </div>
-                    <div class="5 taskcol col-sm-3 col-md-3 col-lg-2">
-
-                    </div>
-                </div>
+            <!-- todo's-->
+            <div class="row" id="tasks">
             </div>
         </div>
     </body>

@@ -1,5 +1,5 @@
 var main = function() {
-    $(document).on("click", ".task", mimicDone);
+    //$(document).on("click", ".task", mimicDone);
 
     $.when(initLists).done(function(){
         initTasks();
@@ -16,29 +16,46 @@ var main = function() {
     $(document).on("click", "#today-button", clearTasks)
     $(document).on("click", "#today-button", displayToday)
 
-    $(document).on("click", ".task-today-button", doToday)
+    //$(document).on("click", ".task-today-button", doToday)
 };
 
 $(document).ready(main);
 
-function mimicDone(){
+/*function mimicDone(){
     if($(this).hasClass("mimic-done")){
         $(this).removeClass("mimic-done");
     }else{
         $(this).addClass("mimic-done");
     };
-};
+};*/
 
-function doToday(){
-    var taskid = $(this).parents(".task").attr("rel"); /*get rel attribute of parent class .task*/
-    addTaskToToday(taskid);
-};
+
+//function doToday(){
+//    var taskid = $(this).parents(".task").attr("rel"); /*get rel attribute of parent class .task*/
+//    addTaskToToday(taskid);
+//};
 
 function displayDefault(){
     var mainLists = ["Snelle taken","Privé", "School", "Werk", "Lange termijn", "Nog in te leveren"];
     var column = 1;
     var listid = 0;
 
+    columnarray = [
+        '<div class="col-sm-3 col-md-3 col-lg-2 col-sm-offset-3 col-md-offset-3 col-lg-offset-2">',
+        '<div class="col-sm-3 col-md-3 col-lg-2">',
+        '<div class="col-sm-3 col-md-3 col-lg-2">',
+        '<div class="col-sm-3 col-md-3 col-lg-2 col-sm-offset-3 col-md-offset-3 col-lg-offset-0 ">',
+        '<div class="col-sm-3 col-md-3 col-lg-2">',
+        '<div class="col-sm-3 col-md-3 col-lg-2 col-sm-offset-0 col-md-offset-0 col-lg-offset-10">' //float last one to right
+    ]
+
+    i = 0
+    $.each(mainLists,function(index,value){
+        listid = getListid(value);
+        $("#tasks").append(columnarray[i]+returnListDiv(listid)+'</div>')
+        i++;
+    });
+/*
     $.each(mainLists,function(index,value){
         listid = getListid(value);
         $("."+column).append(returnListDiv(listid));
@@ -47,8 +64,8 @@ function displayDefault(){
         }else{
             column = 1
         }
+        */
 /*".tasks .taskcol:nth-child("+column+")"*/
-    });
 };
 
 
